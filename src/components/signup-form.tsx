@@ -1,12 +1,5 @@
-import { cn } from '@/lib/utils';
+"use client"
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Field,
   FieldDescription,
@@ -14,31 +7,40 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
-type Props = {
-  onSubmit: (data: { name: string; email: string; password: string }) => void;
-  isLoading?: boolean;
-};
 
-export function SignupForm({ onSubmit, isLoading }: Props) {
+export function SignupForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setisLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const router = useRouter()
 
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    setisLoading(true)
+    const { error } = await authClient.signUp.email({
+      email,
+      password,
+      name,
+      phone
+    });
 
-    onSubmit({ name, email, password });
-  };
+    setisLoading(false)
+    if (error) return toast.error(error.message || "errorrrrrrrr")
+
+    toast.message("Check your inbox for a new verification link.");
+    
+    return router.replace("/dashboard")
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -50,6 +52,10 @@ export function SignupForm({ onSubmit, isLoading }: Props) {
         <Field>
           <FieldLabel htmlFor='email'>Email</FieldLabel>
           <Input value={email} onChange={(e) => setEmail(e.target.value)} id='email' type='email' placeholder='m@example.com' required />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor='phone'>Phone Number</FieldLabel>
+          <Input value={phone} onChange={(e) => setPhone(e.target.value)} id='phone' type='text' placeholder='+92xxxxxxxxx' required maxLength={13} />
         </Field>
         <Field>
           <Field className='grid grid-cols-2 gap-4'>

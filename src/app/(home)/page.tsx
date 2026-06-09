@@ -33,10 +33,6 @@ export default function MindsparkLanding() {
   const router = useRouter();
   return (
     <div className="min-h-screen bg-white text-gray-900 ">
-
-      {/* ── NAV ── */}
-      <Navbar />
-
       {/* ── HERO ── */}
       <section className="bg-white pt-16 overflow-hidden">
         <div className="max-w-6xl mx-auto px-7 min-h-175">
@@ -132,9 +128,6 @@ export default function MindsparkLanding() {
 
       {/* ── WHY MINDSPARK ── */}
       <WhyMindSpark />
-
-      {/* ── FOOTER CTA ── */}
-      <Footer />
 
     </div>
   );

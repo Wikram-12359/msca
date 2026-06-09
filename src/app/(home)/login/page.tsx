@@ -7,37 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 
 export default function Page() {
-  
-  const router = useRouter();
-
-  const handleLogin = async (data: { email: string; password: string }) => {
-    const res = await signIn("credentials", {
-      ...data,
-      redirect: false,
-    });
-
-    if (!res?.ok) {
-      toast.error("Invalid credentials");
-      return;
-    }
-
-    toast.success("Login successful");
-    router.push("/dashboard");
-  };
 
 
   return (
-    <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
+    <div className='flex min-h-[80vh] md:min-h-auto w-full md:items-center justify-center p-6 md:p-10 mt-12 md:mt-0'>
       <div className='w-full max-w-sm'>
-        <Link href='/' className='flex items-center gap-2 self-center font-medium mb-4'>
+        <Link href='/' className='md:flex hidden  items-center gap-2 self-center font-medium mb-4'>
           <Image src='/images/logo.jpeg' alt='Logo' width={40} height={40} />
           MindSpark Coaching Academy
         </Link>
@@ -50,7 +30,7 @@ export default function Page() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <LoginForm onSubmit={handleLogin}   />
+              <LoginForm />
             </CardContent>
           </Card>
         </div>

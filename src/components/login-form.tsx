@@ -7,34 +7,46 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-type Props = {
-  onSubmit: (data: { email: string; password: string }) => void;
-  isLoading?: boolean;
-};
-
-export function LoginForm({onSubmit}: Props) {
+export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true)
     if (!email || !password) {
+      setIsLoading(false)
       toast.error('Please fill in all fields');
       return;
     }
+    
+    const {error} = await authClient.signIn.email({
+      email,
+      password
+    })
 
-    try {
-      setIsLoading(true);
-      await onSubmit({ email, password });
-    } finally {
-      setIsLoading(false);
+    setIsLoading(false)
+
+    if (error?.code === "EMAIL_NOT_VERIFIED") {
+      await authClient.sendVerificationEmail({
+        email,
+        callbackURL: "/verify-email",
+      });
+      toast.message("Check your inbox for a new verification link.");
     }
+
+    if (error) return toast.error(error.message ?? "Login failed")
+    
+    return router.replace("/dashboard")
 
   };
 

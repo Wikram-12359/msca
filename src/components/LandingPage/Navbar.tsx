@@ -1,10 +1,15 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const Navbar = () => {
   const router = useRouter();
+
+   const { data: session } = authClient.useSession();
+  const isAdmin = session?.user?.role === "admin";
 
   const LINKS = [
     {

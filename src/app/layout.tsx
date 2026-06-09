@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import QueryProvider from "@/components/QueryProvider";
 import { cn } from "@/lib/utils";
-import Provider from "@/components/Provider";
+// import Provider from "@/components/Provider";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -37,12 +37,12 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <Provider>
+        {/* <Provider> */}
           <QueryProvider>
           <Toaster richColors position="top-right" />
             {children}
           </QueryProvider>
-        </Provider>
+        {/* </Provider> */}
       </body>
     </html>
   );

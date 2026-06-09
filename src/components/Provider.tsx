@@ -2,7 +2,7 @@
 import { SessionProvider } from "next-auth/react"
 const Provider = ({children}: {children: React.ReactNode}) => {
   return (
-    <SessionProvider refetchInterval={5 * 60}>
+    <SessionProvider refetchInterval={0}>
       {children}
     </SessionProvider>
   )
