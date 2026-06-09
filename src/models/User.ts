@@ -3,14 +3,24 @@ import bcrypt from "bcryptjs"
 
 
 export interface IUser {
-  email: string,
-  password: string,
   _id?: mongoose.Types.ObjectId,
-  
+  name: string,
+  email: string,
+  profileImage?: string,
+  enrolledCourses?: mongoose.Types.ObjectId[],
+  password: string,
+  role?: "student" | "admin" | "teacher",
+  createdAt?: Date,
+  updatedAt?: Date
 }
 
 
 const userSchema = new Schema<IUser>({
+  name:{
+    type: String,
+    trim: true,
+    required: true,
+  },
   email: {
     type: String,
     trim: true,
@@ -18,12 +28,24 @@ const userSchema = new Schema<IUser>({
     required: true,
     unique: true
   },
+  profileImage:{
+    type: String,
+    default: ""
+  },
+  enrolledCourses:[{
+    type: mongoose.Types.ObjectId,
+    ref: "Course",
+  }],
   password:{
     type: String,
     required: true,
-
+  },
+  role:{
+    type: String,
+    enum: ["student", "admin", "teacher"],
+    default: "student"
   }
-})
+}, { timestamps: true })
 
 
 userSchema.pre("save", async function () {
