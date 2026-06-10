@@ -63,6 +63,7 @@ export const auth = betterAuth({
       },
       // Anyone with role "admin" gets admin powers
       adminRoles: ["admin"],
+      defaultRole: "student",
     }),
   ],
 

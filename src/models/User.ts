@@ -1,58 +1,23 @@
-import mongoose, {models, Schema} from "mongoose"
-import bcrypt from "bcryptjs"
+// models/User.ts
+import mongoose, { Schema, model, models } from "mongoose";
 
-
-export interface IUser {
-  _id?: mongoose.Types.ObjectId,
-  name: string,
-  email: string,
-  profileImage?: string,
-  enrolledCourses?: mongoose.Types.ObjectId[],
-  password: string,
-  role?: "student" | "admin" | "teacher",
-  createdAt?: Date,
-  updatedAt?: Date
-}
-
-
-const userSchema = new Schema<IUser>({
-  name:{
-    type: String,
-    trim: true,
-    required: true,
+const UserSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    emailVerified: { type: Boolean, default: false },
+    image: { type: String },
+    role: { type: String, enum: ["student", "teacher", "admin"], default: "student" },
+    phone: { type: String },
+    enrolledCourses: [{ type: String }],
+    mustChangePassword: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
-  email: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    required: true,
-    unique: true
-  },
-  profileImage:{
-    type: String,
-    default: ""
-  },
-  enrolledCourses:[{
-    type: mongoose.Types.ObjectId,
-    ref: "Course",
-  }],
-  password:{
-    type: String,
-    required: true,
-  },
-  role:{
-    type: String,
-    enum: ["student", "admin", "teacher"],
-    default: "student"
+  {
+    collection: "user", // ← critical — Better Auth uses "user" not "users"
   }
-}, { timestamps: true })
+);
 
-
-userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return
-  this.password = await bcrypt.hash(this.password, 10)
-})
-
-const User = models?.User || mongoose.model<IUser>("User", userSchema)
-
-export default User
+const User = models.User || model("User", UserSchema);
+export default User;

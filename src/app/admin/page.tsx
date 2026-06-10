@@ -1,0 +1,15 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function AdminPage() {
+  const router = useRouter()
+  useEffect(()=>{
+    router.replace("/admin/dashboard")
+  },[])
+  return (
+    <section>
+      <h1>Hello</h1>
+    </section>
+  );
+}

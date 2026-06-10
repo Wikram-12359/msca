@@ -1,14 +1,14 @@
-import { TrendingUpIcon } from 'lucide-react';
+"use client"
 import {
   Card,
   CardAction,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 type ICourses = { title: string; description: string };
 const EnrolledCourses = () => {
@@ -18,6 +18,7 @@ const EnrolledCourses = () => {
       description: 'this is a ecat course',
     },
   ];
+  const router = useRouter()
   return (
     <div>
       <div className='flex p-5'>
@@ -29,8 +30,9 @@ const EnrolledCourses = () => {
                 {e.title}
               </CardTitle>
               <CardAction>
-                <Button>Open</Button>
+                <Badge variant={"outline"}>active</Badge>
               </CardAction>
+                <Button onClick={()=> router.push("/dashboard/course/sdfsdsdj")}>Open</Button>
             </CardHeader>
             
           </Card>

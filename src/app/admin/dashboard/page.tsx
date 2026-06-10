@@ -1,11 +1,11 @@
 "use client"
-import { ChartAreaInteractive } from '@/components/chart-area-interactive';
-import EnrolledCourses from '@/components/student/EnrolledCourses';
+import CreateCourse from '@/components/admin/CreateCourse';
 import { authClient } from '@/lib/auth-client';
 import { useUIStore } from '@/store/ui-store';
 import { useEffect } from 'react';
+import CreateTeacherPage from '@/components/admin/CreateTeacher';
 
-export default function Dashboard() {
+export default function AdminDashboard() {
   const {setActivePage} = useUIStore()
 
   useEffect(()=>{
@@ -15,15 +15,16 @@ export default function Dashboard() {
     const { data: session } = authClient.useSession();
     const user = session?.user;
   
-
   return (
     <div className='flex flex-1 flex-col'>
       <div className='@container/main flex flex-1 flex-col gap-2'>
-        <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6'>
+        <div className='flex flex-wrap  py-4 md:gap-6 md:py-6'>
           <div className='px-4 lg:px-6'>
-            <ChartAreaInteractive />
+          <CreateCourse />
           </div>
-          <EnrolledCourses />
+          <div className='px-4 lg:px-6'>
+          <CreateTeacherPage />
+          </div>
         </div>
       </div>
     </div>
