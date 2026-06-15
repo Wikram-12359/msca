@@ -1,40 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import { requireRole } from "@/lib/get-session";
-import User from "@/models/User";
+import { requireRoleApi } from "@/lib/get-session";
+import Course from "@/models/Course";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest) {
   try {
+    await requireRoleApi("student");
     await connectDB();
 
-    const student = await requireRole("student")
-    console.log(student?.user?.name);
+    // Get session again to access user fields
+    const {session, error} = await requireRoleApi("student");
+    if(session == null){
+      return error
+    }
+    const enrolledCourseIds = (session.user as any).enrolledCourses ?? [];
 
-    if(!student || student.user.role != "student"){
-      throw new Error("Access denied")
+    if (enrolledCourseIds.length === 0) {
+      return NextResponse.json({ message: "success", data: [] }, { status: 200 });
     }
 
-    const user = await User.findById(student.user.id).populate("enrolledCourses");
+    // Fetch actual course documents using the IDs
+    const courses = await Course.find({
+      _id: { $in: enrolledCourseIds },
+    });
 
-    console.log(user);
-
-    // if (!course) {
-    //   return NextResponse.json(
-    //     { message: "Course not found" },
-    //     { status: 404 }
-    //   );
-    // }
-
-    return NextResponse.json({message: "success", data: user.enrolledCourses}, { status: 200 });
+    return NextResponse.json({ message: "success", data: courses }, { status: 200 });
   } catch (error) {
     console.error(error);
-
-    return NextResponse.json(
-      { message: "Failed to fetch course" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Failed to fetch courses" }, { status: 500 });
   }
 }

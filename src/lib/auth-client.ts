@@ -5,6 +5,12 @@ import { ac, adminRole, studentRole, teacherRole } from "./permission";
 
 export const authClient = createAuthClient({
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  fetchOptions:{
+    cache: "no-store"
+  },
+  sessionOptions:{
+    refetchOnWindowFocus:false,
+  },
   plugins: [adminClient({
      ac,
       roles: { admin: adminRole, teacher: teacherRole, student: studentRole },

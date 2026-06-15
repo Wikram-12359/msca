@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendVerificationEmail(to: string, url: string) {
   await transporter.sendMail({
-    from: `"YourApp" <${process.env.SMTP_USER}>`,
+    from: `"MSCA" <${process.env.SMTP_USER}>`,
     to,
     subject: "Verify your email",
     html: `
@@ -25,6 +25,28 @@ export async function sendVerificationEmail(to: string, url: string) {
           background:#39FF6A;color:#000;
           border-radius:6px;text-decoration:none;font-weight:bold
         ">Verify Email</a>
+        <p style="color:#999;font-size:12px;margin-top:24px">
+          Link expires in 24 hours. If you didn't sign up, ignore this.
+        </p>
+      </div>
+    `,
+  });
+}
+
+export async function sendResetEmail(to: string, url: string) {
+  await transporter.sendMail({
+    from: `"MSCA" <${process.env.SMTP_USER}>`,
+    to,
+    subject: "Reset Your Password",
+    html: `
+      <div style="font-family:sans-serif;max-width:480px;margin:auto">
+        <h2>Confirm your email</h2>
+        <p>Click the button below to reset your account password:</p>
+        <a href="${url}" style="
+          display:inline-block;padding:12px 24px;
+          background:#39FF6A;color:#000;
+          border-radius:6px;text-decoration:none;font-weight:bold
+        ">Reset Password</a>
         <p style="color:#999;font-size:12px;margin-top:24px">
           Link expires in 24 hours. If you didn't sign up, ignore this.
         </p>

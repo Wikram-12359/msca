@@ -35,9 +35,7 @@ export default function CreateTeacherPage() {
 
     toast.success("Teacher added")
 
-    console.log(result?.user?.user?.id);
-
-    await createSubject(form.get("subject") as string, result?.user?.user?.id as string)
+    await createSubject(form.get("subject") as string, result?.user?.id as string)
     toast.success("Subject assigned")
 
     form.set("name", "")

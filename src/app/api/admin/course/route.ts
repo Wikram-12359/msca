@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Course from "@/models/Course";
 import mongoose from "mongoose";
-import { requireRole } from "@/lib/get-session";
+import { requireRoleApi } from "@/lib/get-session";
 
 
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
-    const session = await requireRole("admin")
+    const {session,error} = await requireRoleApi("admin")
+    if(session == null){
+      return error
+    }
 
     const body = await req.json();
     const { title, teachers, subjects } = body;
@@ -75,6 +78,57 @@ export async function GET(req: NextRequest) {
         success: false,
         message: "Failed to fetch courses",
       },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    await connectDB();
+    const { session, error } = await requireRoleApi("admin");
+    if (session == null) {
+      return error;
+    }
+
+    const { searchParams } = new URL(req.url);
+    const courseId = searchParams.get("id");
+
+    if (!courseId) {
+      return NextResponse.json(
+        { message: "Course ID is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return NextResponse.json(
+        { message: "Invalid course ID" },
+        { status: 400 }
+      );
+    }
+
+    const deletedCourse = await Course.findByIdAndDelete(courseId);
+
+    if (!deletedCourse) {
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        message: "Course deleted successfully",
+        course: deletedCourse,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { message: "Failed to delete course" },
       { status: 500 }
     );
   }

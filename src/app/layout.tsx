@@ -6,6 +6,8 @@ import QueryProvider from "@/components/QueryProvider";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 // import Provider from "@/components/Provider";
+// app/layout.tsx
+import 'katex/dist/katex.min.css'
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -34,6 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      data-scroll-behavior="smooth"
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >

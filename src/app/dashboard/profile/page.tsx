@@ -5,6 +5,9 @@ import { useUIStore } from "@/store/ui-store";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { AvatarUpload } from "@/components/AvatarUpload";
+import { useChangePassword } from "@/hooks/use-password";
 
 export default function Profile() {
   const { setActivePage } = useUIStore();
@@ -20,6 +23,22 @@ export default function Profile() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
+
+  const changePassword = useChangePassword();
+
+const handlePasswordUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  changePassword.mutate(
+    { currentPassword, newPassword },
+    {
+      onSuccess: () => {
+        setCurrentPassword("");
+        setNewPassword("");
+      },
+    }
+  );
+};
+
   const handleAvatarChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -27,17 +46,6 @@ export default function Profile() {
     if (file) setAvatar(file);
   };
 
-  const handlePasswordUpdate = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
-    // call API here
-    console.log({
-      currentPassword,
-      newPassword,
-    });
-  };
 
   return (
     <section className="max-w-3xl p-6 space-y-8">
@@ -52,27 +60,7 @@ export default function Profile() {
       <div className="rounded-lg border p-6 flex flex-col">
         <h2 className="font-semibold mb-4">Profile Picture</h2>
 
-        <div className="flex items-center gap-4 ">
-          
-          <label htmlFor="avatar">
-            <Image
-            src={user?.image || "/images/avatar.jpeg"}
-            alt="Profile"
-            width={80}
-            height={80}
-            className="rounded-full object-cover border-2 hover:opacity-75 cursor-pointer"
-          />
-          </label>
-
-          <Button className="cursor-pointer" variant={"secondary"}>
-              <input
-              id="avatar"
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-            />
-          </Button>
-        </div>
+          <AvatarUpload />
         <Button disabled={!avatar} className="ml-auto cursor-pointer" size={"lg"}>Update Profile</Button>
       </div>
 
@@ -102,16 +90,18 @@ export default function Profile() {
       >
         <h2 className="font-semibold">Change Password</h2>
 
-        <input
+        <Input
           type="password"
+          autoComplete="off"
           placeholder="Current Password"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           className="w-full border rounded-md p-2"
         />
 
-        <input
+        <Input
           type="password"
+          autoComplete="off"
           placeholder="New Password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
@@ -119,13 +109,12 @@ export default function Profile() {
         />
 
         <Button
-          variant={"outline"}
-          size={"lg"}
+          variant="outline"
+          size="lg"
           type="submit"
-          className=" cursor-pointer"
-          disabled={!currentPassword || !newPassword}
+          disabled={!currentPassword || !newPassword || changePassword.isPending}
         >
-          Update Password
+          {changePassword.isPending ? "Updating..." : "Update Password"}
         </Button>
       </form>
     </section>

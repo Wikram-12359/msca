@@ -57,9 +57,10 @@ const Navbar = () => {
         </ul>
         <Button
           onClick={() => router.push("/login")}
-          className='px-6 py-5 rounded-full'
+          className='px-6 py-5 rounded-full cursor-pointer'
+          variant={"outline"}
         >
-          Enroll Now
+          Login
         </Button>
       </div>
     </nav>

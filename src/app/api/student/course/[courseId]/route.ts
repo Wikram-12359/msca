@@ -1,32 +1,35 @@
+// app/api/student/courses/[courseId]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
+import { requireRoleApi } from "@/lib/get-session";
 import Course from "@/models/Course";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  _req: NextRequest,
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
-  try {
-    await connectDB();
+  const {session, error} = await requireRoleApi("student");
+  if(session == null){
+    return error
+  }
+  await connectDB();
 
-    const { id } = await params;
+  const { courseId } = await params;
+  const enrolledCourses = (session.user as any).enrolledCourses ?? [];
 
-    const course = await Course.findById(id);
-
-    if (!course) {
-      return NextResponse.json(
-        { message: "Course not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(course, { status: 200 });
-  } catch (error) {
-    console.error(error);
-
+  // Make sure student is actually enrolled in this course
+  if (!enrolledCourses.includes(courseId)) {
     return NextResponse.json(
-      { message: "Failed to fetch course" },
-      { status: 500 }
+      { message: "You are not enrolled in this course" },
+      { status: 403 }
     );
   }
+
+  const course = await Course.findById(courseId);
+
+  if (!course) {
+    return NextResponse.json({ message: "Course not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(course);
 }

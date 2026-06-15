@@ -1,88 +1,81 @@
 "use client"
 
+import ActiveTests from "@/components/student/ActiveTests"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useStudentMeetings } from "@/hooks/use-student-data"
+import { useStudentStore } from "@/store/student-store"
 import { useUIStore } from "@/store/ui-store"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, use } from "react"
 
-const Course = () => {
 
-  const {setActivePage} = useUIStore()
-  useEffect(()=>{
-    setActivePage("Course")
-  },[])
 
-  const classes = [
-    {
-      name: "Biology",
-      time: "9:00 am",
-      url: "/",
-      active: false
-    },
-    {
-      name: "Chemistry",
-      time: "11:00 am",
-      url: "/",
-      active: false
-    },
-    {
-      name: "Physics",
-      time: "1:00 pm",
-      url: "/",
-      active: true
-    }
-  ]
+type Meeting = {
+  _id: string
+  title: string
+  meetingLink: string
+  isActive: boolean
+}
+
+
+
+const Course = ({ params }: { params: Promise<{ courseId: string }> }) => {
+  const { courseId } = use(params)
+  const { setActivePage } = useUIStore()
   const router = useRouter()
 
+  useEffect(() => {
+    setActivePage("Course")
+  }, [setActivePage])
+ 
+  const course = useStudentStore((s) => s.getCourse(courseId))
+  
+
+  const { data: meetings, isLoading } = useStudentMeetings(courseId)
   return (
     <section className="p-6">
       <div className="rounded-lg border p-6">
         <h2 className="font-semibold mb-4">Course Information</h2>
-
         <div className="space-y-2">
-          <p>
-            <strong>Course Name:</strong> MDCAT
-          </p>
-
-          <p>
-            <strong>Subjects:</strong> Physics, Bio, Chem
-          </p>
-
-        </div>
-      </div>
-
-        <div className="py-6">
-        <h2 className="my-3 text-3xl font-bold">Classes</h2>
-        <div className="flex gap-4 flex-wrap">
-          {classes.map((e,i)=>(
-          <Card key={i} className="min-w-40">
-            <CardHeader>
-              <CardTitle>{e.name}</CardTitle>
-              <CardDescription>{e.time}</CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <Button onClick={()=> router.push(e.url)} disabled={!e.active} size={"lg"}>Start Classes</Button>
-            </CardFooter>
-          </Card>
-          ))}
+          <p><strong>Course Name:</strong> {course?.title}</p>
+          <p><strong>Description:</strong> {course?.description}</p>
         </div>
       </div>
 
       <div className="py-6">
-        <h2 className="my-3 text-3xl font-bold">Tests</h2>
-        <Card>
-          <CardHeader>
-            <CardTitle>Biology Test</CardTitle>
-            <CardDescription>9:00 am</CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button disabled={true} size={"lg"}>Start Test</Button>
-          </CardFooter>
-        </Card>
+        <h2 className="my-3 text-3xl font-bold">Classes</h2>
+        {isLoading ? (
+          <p>Loading classes...</p>
+        ) : meetings?.length === 0 ? (
+          <p className="text-muted-foreground">No active classes right now.</p>
+        ) : (
+          <div className="flex gap-4 flex-wrap">
+            {meetings?.map((meeting: Meeting) => (
+              <Card key={meeting._id} className="min-w-40">
+                <CardHeader>
+                  <CardTitle>{meeting.title}</CardTitle>
+                  <Badge variant={"outline"}>{meeting?.isActive ? "Active" : "Ended"}</Badge>
+                  </CardHeader>
+                <CardFooter>
+                  <Button
+                    onClick={() => router.push(meeting?.meetingLink ?? "")}
+                    size="lg"
+                  >
+                    Join Class
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
-
+      <div className="py-6">
+        <h2 className="my-3 text-3xl font-bold">Active Tests</h2>
+        <ActiveTests courseId={courseId} />
+      </div>
     </section>
   )
 }

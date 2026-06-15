@@ -7,6 +7,7 @@ export interface IResult {
   totalScore: number,
   student: mongoose.Types.ObjectId,
   testId: mongoose.Types.ObjectId,
+  attempted?: boolean,
 }
 
 
@@ -27,6 +28,10 @@ const resultSchema = new Schema<IResult>({
     type: mongoose.Types.ObjectId,
     ref: "Test",
   }],
+  attempted: {
+    type: Boolean,
+    default: true,
+  },
 }, { timestamps: true })
 
 

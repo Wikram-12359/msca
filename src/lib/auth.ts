@@ -4,7 +4,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { admin as adminPlugin } from "better-auth/plugins";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
-import { sendVerificationEmail } from "./email";
+import { sendResetEmail, sendVerificationEmail } from "./email";
 import { ac, adminRole, studentRole, teacherRole } from "./permission";
 
 // Lazily get the raw Mongo client that better-auth needs
@@ -22,6 +22,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+    await sendResetEmail(user.email, url); // reuse your existing email util
+    // or create a separate sendResetPasswordEmail function
+  },
   },
 
   emailVerification: {
@@ -30,7 +34,11 @@ export const auth = betterAuth({
     },
     sendOnSignIn: true, // resend if they try to log in unverified
     autoSignInAfterVerification: true, // sign them in right after clicking link
+    
   },
+  
+
+  
 
   // Extend the user object with a role field
   user: {
@@ -43,14 +51,39 @@ export const auth = betterAuth({
       enrolledCourses:{
         type: "string[]",
         defaultValue: [],
-        input: false
+        input: true
       },
       phone: {
         type: "string",
         required: true,
       },
+      image:{
+        type: "string",
+        default: ""
+      }
 
     },
+  },
+
+
+   advanced: {
+    cookiePrefix: "msca",
+    cookies: {
+      session_token: {
+        attributes: {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 7,
+        },
+      },
+    },
+  },
+
+  rateLimit: {
+    enabled: true,
+    window: 60,   // seconds
+    max: 5,       // attempts per window
   },
 
   plugins: [

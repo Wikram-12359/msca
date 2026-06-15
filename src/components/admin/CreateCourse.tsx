@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
-import { MultiSelect, SelectAValue } from "./MultiSelect";
+import { MultiSelect } from "./MultiSelect";
 import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle } from "../ui/card";
 import { getSubjects } from "@/app/admin/dashboard/actions";
@@ -37,14 +37,17 @@ const CreateCourse = () => {
 
   console.log(data);
 
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: createCourse,
 
     onSuccess: () => {
       toast.success("Course created successfully");
-      setSubjects([])
-      setTeachers([])
-      setTitle("")
+      setSubjects([]);
+      setTeachers([]);
+      setTitle("");
+      queryClient.invalidateQueries({ queryKey: ["admin", "courses"] });
       // router.push("/dashboard/courses");
     },
 

@@ -1,34 +1,45 @@
-import mongoose, {models, Schema} from "mongoose"
+// models/Test.ts
+import mongoose, { Schema, model, models } from "mongoose";
 
-
-export interface ITest {
-  _id?: mongoose.Types.ObjectId,
-  mcqs: mongoose.Types.ObjectId[],
-  teacher?: mongoose.Types.ObjectId,  
-  students: mongoose.Types.ObjectId[],
-  createdAt?: Date,
-  updatedAt?: Date
+export interface IQuestion {
+  text: string;
+  options: string[];
+  correct: number;
 }
 
+export interface ITest {
+  _id: string;
+  title: string;
+  course: mongoose.Types.ObjectId;
+  duration: number;
+  marksPerQuestion: number;
+  negativeMarking: number;
+  questions: IQuestion[];
+  attempted: boolean;
+  createdBy: string;
+  isPublished: boolean;
+  createdAt: Date;
+}
 
-const testSchema = new Schema<ITest>({
+const QuestionSchema = new Schema<IQuestion>({
+  text: { type: String, required: true },
+  options: [{ type: String, required: true }],
+  correct: { type: Number, required: true },
+});
 
-  mcqs:[{
-    type: mongoose.Types.ObjectId,
-    ref: "MCQ",
-  }],
-  teacher: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
+const TestSchema = new Schema<ITest>(
+  {
+    title: { type: String, required: true },
+    course: { type: Schema.Types.ObjectId, ref: "Course", required: true },
+    duration: { type: Number, required: true },
+    marksPerQuestion: { type: Number, default: 1 },
+    negativeMarking: { type: Number, default: 0 },
+    attempted: {type: Boolean, default: false},
+    questions: [QuestionSchema],
+    createdBy: { type: String, required: true },
+    isPublished: { type: Boolean, default: false },
   },
-  students:[{
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-  }],
-}, { timestamps: true })
+  { timestamps: true }
+);
 
-
-
-const Test = models?.Test || mongoose.model<ITest>("Test", testSchema)
-
-export default Test
+export default models.Test || model<ITest>("Test", TestSchema);

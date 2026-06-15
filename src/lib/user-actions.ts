@@ -2,11 +2,14 @@
 "use server";
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
-import { requireRole, getRequiredSession } from "@/lib/get-session";
+import { requireRoleApi} from "@/lib/get-session";
 
 // Student enrolls in a course
 export async function enrollInCourse(courseId: string) {
-  const session = await requireRole("student");
+  const {session,error} = await requireRoleApi("student");
+  if(session == null){
+    return error
+  }
   await connectDB();
   await mongoose.connection.db!.collection("user").updateOne(
     { _id: session.user.id },
@@ -16,7 +19,10 @@ export async function enrollInCourse(courseId: string) {
 
 // Admin promotes user to teacher
 export async function setRole(userId: string, role: "student" | "teacher" | "admin") {
-  await requireRole("admin");
+  const {session,error} = await requireRoleApi("admin");
+  if(session == null){
+    return error
+  }
   await connectDB();
   await mongoose.connection.db!.collection("user").updateOne(
     { _id: userId },

@@ -12,12 +12,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, UsersIcon, } from "lucide-react"
+import { LayoutDashboardIcon, ListIcon, TestTube2, UsersIcon, } from "lucide-react"
 import Image from "next/image"
 import { authClient } from "@/lib/auth-client"
 import { NavMain } from "./nav-main"
 
-const data = {
+const studentData = {
   user: {
     name: "shadcn",
     email: "m@example.com",
@@ -54,9 +54,85 @@ const data = {
   
 }
 
+
+const adminData = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: (
+        <LayoutDashboardIcon
+        />
+      ),
+    },
+    {
+      title: "Add Students",
+      url: "/admin/dashboard/enroll-students",
+      icon: (
+        <ListIcon
+        />
+      ),
+    },
+    {
+      title: "Tests",
+      url: "/admin/dashboard/tests",
+      icon: (
+        <TestTube2
+        />
+      ),
+    },
+    
+  ],
+  
+  
+}
+
+const teacherData = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/teacher",
+      icon: (
+        <LayoutDashboardIcon
+        />
+      ),
+    },
+    {
+      title: "Profile",
+      url: "/teacher/profile",
+      icon: (
+        <UsersIcon
+        />
+      ),
+    }
+  ],
+  
+  
+}
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = authClient.useSession();
   const user = session?.user
+  let links;
+
+  if(user?.role == "teacher"){
+    links = teacherData.navMain
+  }else if(user?.role == "admin"){
+    links = adminData.navMain
+  }else{
+    links = studentData.navMain
+  }
+
   console.log(user);
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -76,10 +152,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={links} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={{name: user?.name || "", email: user?.email || "", avatar: ""  }} />
+        <NavUser user={{
+          name: session?.user?.name ?? "",
+          email: session?.user?.email ?? "",
+          image: session?.user?.image,  // not avatar
+        }} />
       </SidebarFooter>
     </Sidebar>
   )

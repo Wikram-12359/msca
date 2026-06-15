@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import Course from "@/models/Course";
 import mongoose from "mongoose";
-import { requireRole } from "@/lib/get-session";
+import { requireRoleApi } from "@/lib/get-session";
 import Subject from "@/models/Subject";
 
 
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
-    const session = await requireRole("admin")
+    const {session, error} = await requireRoleApi("admin")
+    if(session == null){
+      return error
+    }
 
     const body = await req.json();
     const { title, teacher } = body;
@@ -17,8 +19,6 @@ export async function POST(req: NextRequest) {
     if(!title || !teacher){
       throw new Error("all fields required")
     }
-
-    console.log(title, teacher);
 
 
     // validate ObjectIds

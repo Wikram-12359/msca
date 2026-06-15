@@ -1,23 +1,14 @@
-// MindsparkLanding.jsx — Next.js + Tailwind CSS
-// Drop this into your app/page.jsx or pages/index.jsx
-// Add to tailwind.config.js: extend.colors with the palette below
-// Required: npm install @tabler/icons-react
 "use client";
-import Link from "next/link";
 import {
   GraduationCap, Building2, Award,
   FlaskConical, Laptop
 } from "lucide-react";
-import Navbar from "@/components/LandingPage/Navbar";
 import Services from "@/components/LandingPage/Services";
-import Footer from "@/components/LandingPage/Footer";
 import WhyMindSpark from "@/components/LandingPage/WhyMindSpark";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-// ─── palette (add to tailwind.config.js → theme.extend.colors) ───────────────
-// dg: "#0D4A2F"   mg: "#1A6B44"   ag: "#22C55E"   lgbg: "#F0FDF4"
-// ─────────────────────────────────────────────────────────────────────────────
 
 
 
@@ -53,11 +44,11 @@ export default function MindsparkLanding() {
                 <Button onClick={()=> router.push("/login")} className="py-6 rounded-full px-4 " size={"lg"}>
                   <GraduationCap size={16} /> Start Enrollment
                 </Button>
-                <a href="#courses">
+                <Link href="/login">
                   <Button className="py-6 px-4 rounded-full" size="lg" variant={"outline"}>
-                    View Courses
+                    Login
                   </Button>
-                </a>
+                </Link>
               </div>
               
             </div>

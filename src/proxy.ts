@@ -3,13 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 export async function proxy(request: NextRequest) {
-  const session = getSessionCookie(request);
+  const session = getSessionCookie(request, {
+    cookiePrefix: "msca", // ← match your auth.ts prefix
+  });
+
   const { pathname } = request.nextUrl;
 
-  const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/register");
-  const isProtected = pathname.startsWith("/dashboard") ||
-                      pathname.startsWith("/admin") ||
-                      pathname.startsWith("/teacher");
+  const isAuthRoute =
+    pathname.startsWith("/login") || pathname.startsWith("/register");
+
+  const isProtected =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/teacher") ||
+    pathname.startsWith("/courses");
 
   if (!session && isProtected) {
     const url = new URL("/login", request.url);
@@ -25,5 +32,12 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/teacher/:path*", "/login", "/register"],
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/teacher/:path*",
+    "/courses/:path*",
+    "/login",
+    "/register",
+  ],
 };

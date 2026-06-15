@@ -12,11 +12,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { ForgotPasswordModal } from "@/components/ForgotPasswordModal";
+
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false)
+  const [forgotOpen, setForgotOpen] = useState(false);
 
   const router = useRouter()
 
@@ -29,7 +32,7 @@ export function LoginForm() {
       return;
     }
     
-    const {error} = await authClient.signIn.email({
+    const {data, error} = await authClient.signIn.email({
       email,
       password
     })
@@ -45,12 +48,22 @@ export function LoginForm() {
     }
 
     if (error) return toast.error(error.message ?? "Login failed")
-    
-    return router.replace("/dashboard")
+    console.log(data);
+
+    if(data?.user?.role =="admin"){
+      return router.replace("/admin/dashboard")
+    }else if(data?.user?.role == "teacher"){
+      return router.replace("/teacher")
+    }else{
+      return router.replace("/dashboard")
+    }
 
   };
 
+
+
   return (
+    <>
     <form onSubmit={handleSubmit}>
       <FieldGroup>
         <Field>
@@ -60,12 +73,13 @@ export function LoginForm() {
         <Field>
           <div className='flex items-center'>
             <FieldLabel htmlFor='password'>Password</FieldLabel>
-            <a
-              href='#'
-              className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
+            <button
+              type="button"
+              onClick={() => setForgotOpen(true)}
+              className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
             >
               Forgot your password?
-            </a>
+            </button>
           </div>
           <Input autoComplete='off' value={password} onChange={(e) => setPassword(e.target.value)} id='password' type='password' required />
         </Field>
@@ -79,5 +93,8 @@ export function LoginForm() {
         </Field>
       </FieldGroup>
     </form>
+      <ForgotPasswordModal open={forgotOpen} onOpenChange={setForgotOpen} />
+    </>
   );
+  
 }

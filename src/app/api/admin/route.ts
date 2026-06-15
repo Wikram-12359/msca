@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import { requireRole } from "@/lib/get-session";
+import { requireRoleApi } from "@/lib/get-session";
 import Subject from "@/models/Subject";
 import "@/models/User";
 
 
 export async function GET(req: NextRequest) {
   try {
-    requireRole("admin")
+    const {session,error} = await requireRoleApi("admin");
+    if(session == null){
+      return error
+    }
     await connectDB();
 
     const subjects = await Subject.find().populate("teacher")
