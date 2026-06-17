@@ -298,7 +298,7 @@ export default function CreateTestPage() {
                   <SelectValue placeholder="Select course..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {courses?.data?.map((c: any) => (
+                  {courses?.map((c: any) => (
                     <SelectItem key={c._id} value={c._id}>
                       {c.title}
                     </SelectItem>
