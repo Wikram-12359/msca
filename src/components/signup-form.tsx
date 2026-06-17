@@ -32,7 +32,7 @@ export function SignupForm() {
       password,
       name,
       phone
-    });
+    }as any);
 
     setisLoading(false)
     if (error) return toast.error(error.message || "errorrrrrrrr")
