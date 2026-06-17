@@ -5,7 +5,7 @@ import { ac, adminRole, studentRole, teacherRole } from "./permission";
 import {auth} from "./auth";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL ?? "https://mindspark-academy.vercel.app",
   fetchOptions:{
     cache: "no-store"
   },
