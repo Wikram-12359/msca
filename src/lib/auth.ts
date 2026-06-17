@@ -7,7 +7,6 @@ import { connectDB } from "@/lib/db";
 import { sendResetEmail, sendVerificationEmail } from "./email";
 import { ac, adminRole, studentRole, teacherRole } from "./permission";
 
-// Lazily get the raw Mongo client that better-auth needs
 async function getMongoClient() {
   await connectDB();
   return mongoose.connection.getClient();
@@ -23,46 +22,34 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
-    await sendResetEmail(user.email, url); // reuse your existing email util
-    // or create a separate sendResetPasswordEmail function
-  },
+      await sendResetEmail(user.email, url);
+    },
   },
 
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      void sendVerificationEmail(user.email, url); // don't await — timing attack
+      void sendVerificationEmail(user.email, url);
     },
-    sendOnSignIn: true, // resend if they try to log in unverified
-    autoSignInAfterVerification: true, // sign them in right after clicking link
-    
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
   },
-  
 
-  
-
-  // Extend the user object with a role field
   user: {
     additionalFields: {
-      role: {
-        type: "string",
-        defaultValue: "student",
-        input: false, // users can't set their own role on signup
-      },
-      enrolledCourses:{
+      // ❌ removed role — admin plugin owns this via defaultRole
+      enrolledCourses: {
         type: "string[]",
         defaultValue: [],
-        input: true
+        input: true,
       },
       phone: {
         type: "string",
-        required: true,
+        required: false, // ❌ was true — breaks Vercel build
       },
-
     },
   },
 
-
-   advanced: {
+  advanced: {
     cookiePrefix: "msca",
     cookies: {
       session_token: {
@@ -78,8 +65,8 @@ export const auth = betterAuth({
 
   rateLimit: {
     enabled: true,
-    window: 60,   // seconds
-    max: 5,       // attempts per window
+    window: 60,
+    max: 5,
   },
 
   plugins: [
@@ -88,17 +75,16 @@ export const auth = betterAuth({
       roles: {
         admin: adminRole,
         teacher: teacherRole,
-        student: studentRole
+        student: studentRole,
       },
-      // Anyone with role "admin" gets admin powers
       adminRoles: ["admin"],
       defaultRole: "student",
     }),
   ],
 
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24,     // refresh if older than 1 day
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
   },
 });
 
