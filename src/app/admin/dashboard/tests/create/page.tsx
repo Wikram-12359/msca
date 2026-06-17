@@ -43,7 +43,7 @@ type Question = {
 };
 
 function insertAtCursor(
-  ref: React.RefObject<HTMLTextAreaElement>,
+  ref: React.RefObject<HTMLTextAreaElement | null>,
   snippet: string,
   onChange: (val: string) => void
 ) {
@@ -71,7 +71,7 @@ export function QuestionEditor({
   onChange: (q: Question) => void;
   onRemove: () => void;
 }) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   return (
     <Card className="mb-4">
