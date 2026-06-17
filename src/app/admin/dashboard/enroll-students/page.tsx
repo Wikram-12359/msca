@@ -62,7 +62,7 @@ const EnrollStudents = () => {
           className="border rounded px-3 py-2 text-sm bg-background"
         >
           <option value="">Select a course...</option>
-          {courses?.data?.map((c) => (
+          {courses?.map((c) => (
             <option key={c._id} value={c._id}>
               {c.title}
             </option>
