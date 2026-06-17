@@ -48,7 +48,7 @@ export default function CreateMeeting() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Courses</SelectLabel>
-                {courses?.courses?.map((e)=>(
+                {courses?.courses?.map((e: {_id: string, title: string})=>(
                   <SelectItem key={e?._id} value={e?._id}>{e?.title} </SelectItem>
                 ))}
               </SelectGroup>
