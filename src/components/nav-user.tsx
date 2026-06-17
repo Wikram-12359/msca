@@ -56,18 +56,20 @@ function UserAvatar({
   return (
     <Avatar className={className}>
       {image ? (
-        <CldImage
+          <CldImage
           src={image}
           width={40}
           height={40}
           alt={name}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover rounded-full"
         />
-      ) : null}
-      {/* AvatarFallback shows when image is null/undefined or fails to load */}
-      <AvatarFallback className="rounded-lg bg-muted text-muted-foreground text-xs font-medium">
+      ) : (
+           <AvatarFallback className="rounded-lg bg-muted text-muted-foreground text-xs font-medium">
         {initials}
-      </AvatarFallback>
+        </AvatarFallback>
+      )}
+      {/* AvatarFallback shows when image is null/undefined or fails to load */}
+   
     </Avatar>
   )
 }

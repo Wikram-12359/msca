@@ -1,7 +1,5 @@
 // next.config.ts
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -9,6 +7,11 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
       },
     ],
+    minimumCacheTTL: 60,
+  },
+  // Increase timeout for image optimization
+  experimental: {
+    proxyTimeout: 30000, // 30 seconds
   },
 };
 
