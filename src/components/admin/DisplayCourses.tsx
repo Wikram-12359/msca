@@ -51,7 +51,7 @@ const DisplayCourses = () => {
     );
   }
 
-  if (courses?.data.length === 0) {
+  if (courses?.length === 0) {
     return (
       <div className="p-4 text-gray-600 text-center">
         No courses found
@@ -72,7 +72,7 @@ const DisplayCourses = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {courses?.data?.map((course: Course) => (
+          {courses?.map((course: Course) => (
             <TableRow key={course._id}>
               <TableCell className="font-medium">{course.title}</TableCell>
               <TableCell>
