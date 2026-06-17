@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
 import { requireRoleApi} from "@/lib/get-session";
+import { ObjectId } from "mongodb";
 
 // Student enrolls in a course
 export async function enrollInCourse(courseId: string) {
@@ -12,7 +13,7 @@ export async function enrollInCourse(courseId: string) {
   }
   await connectDB();
   await mongoose.connection.db!.collection("user").updateOne(
-    { _id: session.user.id },
+    { _id: new ObjectId(session.user.id) },
     { $addToSet: { enrolledCourses: courseId } }
   );
 }
