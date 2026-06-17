@@ -23,7 +23,9 @@ export async function createTeacher(data: CreateTeacherInput) {
         email,
         password,
         role: "teacher",
-        phone,
+        data:{
+          phone          
+        }
       },
       sendVerificationEmail: false,
     });
