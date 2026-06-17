@@ -26,7 +26,7 @@ export async function setRole(userId: string, role: "student" | "teacher" | "adm
   }
   await connectDB();
   await mongoose.connection.db!.collection("user").updateOne(
-    { _id: userId },
+    { _id: new ObjectId(userId) },
     { $set: { role } }
   );
 }
