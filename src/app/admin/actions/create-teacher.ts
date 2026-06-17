@@ -24,10 +24,10 @@ export async function createTeacher(data: CreateTeacherInput) {
         password,
         role: "teacher",
         data:{
-          phone          
+          phone,
+          emailVerified:true
         }
-      },
-      sendVerificationEmail: false,
+      }
     });
 
     await connectDB()
