@@ -40,7 +40,7 @@ export const auth = betterAuth({
       enrolledCourses: {
         type: "string[]",
         defaultValue: [],
-        input: true,
+        input: false,
       },
       phone: {
         type: "string",
