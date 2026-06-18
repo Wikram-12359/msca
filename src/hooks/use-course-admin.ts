@@ -7,7 +7,10 @@ type Course = { _id: string; title: string };
 export function useAdminCourses() {
   return useQuery<Course[]>({
     queryKey: ["admin", "courses"],
-    queryFn: () => api.get("/admin/course"), // ← interceptor already returns data
+    queryFn: async () => {
+      const res = await api.get("/admin/course");
+      return res.data.data;
+    }
   });
 }
 
