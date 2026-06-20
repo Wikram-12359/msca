@@ -4,6 +4,26 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
+function getYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+
+    // youtube.com/watch?v=VIDEO_ID
+    if (parsed.hostname.includes("youtube.com")) {
+      return parsed.searchParams.get("v");
+    }
+
+    // youtu.be/VIDEO_ID
+    if (parsed.hostname.includes("youtu.be")) {
+      return parsed.pathname.slice(1);
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Lecture(){
   const {link} = useParams()
 
@@ -17,7 +37,7 @@ export default function Lecture(){
           const res = await api.get(`/student/lecture/${link}`)
           console.log(res);
           if (!mounted) return
-          setLecture(res?.data?.link ?? "")
+          setLecture(getYouTubeVideoId(res?.data?.link))
         } catch (err: unknown) {
           if (!mounted) return
           console.error(err)
@@ -36,13 +56,13 @@ export default function Lecture(){
 
   return (
     <div className="p-2">
-      <p className="text-xl">{loading ?? "Loading...."}</p>
+      {loading && <p className="text-xl">Loading...</p>}
       {lecture && (
         <iframe
           className="w-full min-h-[80vh]"
           width="560"
           height="315"
-          src={`https://www.youtube.com/embed/${lecture}`}
+          src={`https://www.youtube.com/embed/${lecture}?rel=0&modestbranding=1`}
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
