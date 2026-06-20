@@ -2,7 +2,16 @@
 import api from "@/lib/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-type Course = { _id: string; title: string };
+type subjectType = {
+  _id: string,
+  title: string
+}
+
+type Course = {
+  _id: string;
+  title: string;
+  subjects: subjectType[];
+}
 
 export function useAdminCourses() {
   return useQuery<Course[]>({
