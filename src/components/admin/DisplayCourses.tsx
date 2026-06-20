@@ -10,10 +10,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useAdminCourses, useDeleteCourse } from "@/hooks/use-course-admin";
+import { useDeleteCourse } from "@/hooks/use-course-admin";
 import { Loader2, Trash2 } from "lucide-react";
 
-interface Course {
+type Course = {
   _id: string;
   title: string;
   teachers?: any[];
@@ -21,8 +21,9 @@ interface Course {
   students?: any[];
 }
 
-const DisplayCourses = () => {
-  const { data: courses = [], isLoading, error } = useAdminCourses();
+const DisplayCourses = ({courses, isLoading, error}: {courses: Course[], isLoading: boolean, error: Error | null}) => {
+  
+  console.log('course: ', courses);
   const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 

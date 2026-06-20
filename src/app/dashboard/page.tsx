@@ -1,5 +1,4 @@
 "use client"
-import { ChartAreaInteractive } from '@/components/chart-area-interactive';
 import EnrolledCourses from '@/components/student/EnrolledCourses';
 import { useEnrolledCourses } from '@/hooks/use-student-data';
 import { authClient } from '@/lib/auth-client';
@@ -45,9 +44,6 @@ export default function Dashboard() {
     <div className='flex flex-1 flex-col'>
       <div className='@container/main flex flex-1 flex-col '>
         <div className='flex flex-col gap-4 py-4 '>
-          {/* <div className='px-4 lg:px-6'>
-            <ChartAreaInteractive /> 
-          </div> */}
           <EnrolledCourses data={data?.data} />
         </div>
       </div>

@@ -3,14 +3,13 @@
 import ActiveTests from "@/components/student/ActiveTests"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useStudentMeetings } from "@/hooks/use-student-data"
 import { useStudentStore } from "@/store/student-store"
 import { useUIStore } from "@/store/ui-store"
 import { useRouter } from "next/navigation"
 import { useEffect, use } from "react"
-
-
+import RecordedLectures from "@/components/student/RecordedLectures"
 
 type Meeting = {
   _id: string
@@ -75,6 +74,10 @@ const Course = ({ params }: { params: Promise<{ courseId: string }> }) => {
       <div className="py-6">
         <h2 className="my-3 text-3xl font-bold">Active Tests</h2>
         <ActiveTests courseId={courseId} />
+      </div>
+
+      <div className="py-3">
+        <RecordedLectures courseId={courseId} />
       </div>
     </section>
   )
