@@ -19,6 +19,12 @@ export default function HomeLayout({
       <main className="grow w-full h-full">{children}</main>
 
       <Footer />
+      <p className="text-white mx-auto w-full flex justify-center pb-1 bg-primary">
+          Website created by: 
+          <a className="text-blue-400 hover:border-blue-400 border-b border-transparent" href="https://www.linkedin.com/in/vishal-dewani/" target="_blank">
+          Vishal Dewani
+          </a>
+      </p>
     </>
   );
 }
