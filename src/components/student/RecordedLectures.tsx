@@ -6,7 +6,16 @@ import api from "@/lib/axios";
 import Link from "next/link";
 
 type LecTypes = {
-  lecture: string,
+  _id: string;
+  name: string;
+  course: {
+    title: string;
+    _id: string;
+  };
+  subject: {
+    _id: string;
+    title: string;
+  }
 }
 
 export default function RecordedLectures({courseId}: {courseId: string}) {
