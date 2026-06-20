@@ -17,10 +17,7 @@ type subjectType = {
 type Course = {
   _id: string;
   title: string;
-  subject: [];
-  teachers?: any[];
-  subjects?: subjectType[];
-  students?: any[];
+  subjects: subjectType[];
 }
 
 export default function UploadLecture({courses} : {courses: Course[]}) {
