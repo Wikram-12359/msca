@@ -8,13 +8,13 @@ import { authClient } from "@/lib/auth-client";
 const Navbar = () => {
   const router = useRouter();
 
-   const { data: session } = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const isAdmin = session?.user?.role === "admin";
 
   const LINKS = [
     {
-      name: "Home",
-      link: "/",
+      name: session?.user ? "Dashboard" : "Home",
+      link: session?.user ? "/dashboard" : "/",
     },
     {
       name: "Courses",
